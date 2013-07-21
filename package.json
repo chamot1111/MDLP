@@ -3,6 +3,8 @@
   "description": "MarkDown Literate Programing: A parser for literate programing inherit from markdown syntax",
   "author": "Alan Crouau",
   "version": "0.0.1",
+  "main": "./lib/mdlp.js",
+  "bin": "./bin/mdlp",
   "preferGlobal": true,
   "repository": "https://github.com/chamot1111/MDLP.git",
   "homepage": "https://github.com/chamot1111/mdlp",
