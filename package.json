@@ -1,0 +1,14 @@
+{
+  "name": "mdlp",
+  "description": "MarkDown Literate Programing: A parser for literate programing inherit from markdown syntax",
+  "author": "Alan Crouau",
+  "version": "0.0.1",
+  "preferGlobal": true,
+  "keywords": ["markdown", "literate programing"],
+  "tags": ["markdown", "literate programing"],
+  "dependencies": {
+    "commander": "*"
+  },
+  "devDependencies": {
+  }
+}
