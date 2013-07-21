@@ -4,6 +4,9 @@
   "author": "Alan Crouau",
   "version": "0.0.1",
   "preferGlobal": true,
+  "repository": "https://github.com/chamot1111/MDLP.git",
+  "homepage": "https://github.com/chamot1111/mdlp",
+  "bugs": { "url": "http://github.com/chjj/marked/issues" },
   "keywords": ["markdown", "literate programing"],
   "tags": ["markdown", "literate programing"],
   "dependencies": {
