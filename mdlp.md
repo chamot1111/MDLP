@@ -256,8 +256,7 @@ When a macro declaration become child of another we remove it from the root list
 						rootArray.splice(index, 1);
 					}
 				} else {
-					success = false;
-					console.error(mc.Filename + ":" + mc.lineNumber + " can't find macro declaration " + mc.Name);
+					console.warn(mc.Filename + ":" + mc.lineNumber + " can't find macro declaration " + mc.Name);
 				}
 			}
 		}
@@ -277,8 +276,10 @@ Travel through all the tree with Depth-first pre-order traversal and concatenate
 		for(var i = 0; i < node.MacroContentArray.length; i++) {
 			var c = node.MacroContentArray[i];
 			if(c.IsMacroReference) {
-				if("Ref" in c) {
+				if("Ref" in c && c.Ref != null) {
 					traverse(c.Ref, indent + c.Indent);
+				} else {
+					lines.push("<<" + c.Name + ">>");
 				}
 			} else {
 				// indent the line
@@ -568,9 +569,12 @@ function ExtractSourceCode(inputFilesArray, outputFolder) {
 	
 	// create tree
 	var rootArray = tree.ConstructTree(macroDeclarationArray);
-	
-	// write source code
-	writer.WriteTree(rootArray, outputFolder);
+	if(rootArray != null) {
+		// write source code
+		writer.WriteTree(rootArray, outputFolder);
+	} else {
+		console.error("generation stopped after some error in the tree");
+	}
 }
 
 module.exports.ExtractSourceCode = ExtractSourceCode;
