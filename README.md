@@ -14,6 +14,14 @@ mdlp -o ./ mdlp.md
 CLI Usage
 ---------
 
+To install the program as a binary. Use npm with this command:
+
+```
+npm install -g mdlp
+```
+
+Then you can use it from the command line.
+
 ```
 mdlp -o ./src_folder file1.md file2.md file3.md
 ```
@@ -39,7 +47,7 @@ You can add code to a macro already defined like this:
 		line of code 4
 	```
 	
-All the code blocks are extracted from the file. The root macro names become file:
+All the code blocks are extracted from the file. The root macros names become file:
 	```
 	<<./lib/file1>> =
 		<<macro-name>>
