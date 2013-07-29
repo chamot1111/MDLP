@@ -58,6 +58,9 @@ First we jump to the next line ( first line of code block) and until we find the
 		line_index++;
 	}
 
+	// go back to the last line of the block
+	line_index--;
+
 	callback(block, lineNumber, filename);
 ```
 
