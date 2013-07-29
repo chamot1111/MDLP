@@ -26,6 +26,14 @@ Then you can use it from the command line.
 mdlp -o ./src_folder file1.md file2.md file3.md
 ```
 
+### Comment helper
+
+It's possible to add a comment in the source code before each macro declaration block. As MDLP can extract any language you have to precise what is the comment starter.
+
+```
+mdlp -c // file1.md
+```
+
 MDLP syntax
 -----------
 

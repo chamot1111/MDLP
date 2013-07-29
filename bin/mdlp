@@ -14,11 +14,12 @@ program
   .version('0.0.1')
   .usage(usageLine)
   .option('-o, --output-folder [path]', 'output folder for the source code')
+  .option('-c, --comment [comment]', 'if you want to have comment in the source code with the name of macro')
 
 program.parse(process.argv);
 
 if(program.args.length != 0) {
-  mdlp.ExtractSourceCode(program.args, program.outputFolder);
+  mdlp.ExtractSourceCode(program.args, program.outputFolder, program.comment);
 } else {
   console.error("Usage: mdlp " + usageLine);
 }
