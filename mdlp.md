@@ -273,6 +273,15 @@ Travel through all the tree with Depth-first pre-order traversal and concatenate
 <<flat-tree-body>> =
 	var lines = [];
 	function traverse(node, indent) {
+		if(comment != null) {
+			var s = "";
+            for(var j = 0; j < indent; j++) {
+                s += " ";
+            }
+            s += comment + " <<" + node.Name + ">> ( " + node.Filename + ":" + node.Linenumber + ")";
+
+			lines.push(s);
+		}
 		for(var i = 0; i < node.MacroContentArray.length; i++) {
 			var c = node.MacroContentArray[i];
 			if(c.IsMacroReference) {
@@ -497,11 +506,11 @@ Writer Module
 	/**
 	 * Take a macro declaration tree and flat it into a array of line
 	 */
-	function FlatTree(root) {
+	function FlatTree(root, comment) {
 		<<flat-tree-body>>
 	}
 	
-	function WriteTree(rootArray, outputFolder) {
+	function WriteTree(rootArray, outputFolder, comment) {
 		var success = true;
 		var absoluteOutputFolder = path.resolve(outputFolder);
 		if(!fs.existsSync(absoluteOutputFolder)) {
@@ -522,7 +531,7 @@ Writer Module
 				continue;
 			}
 
-			var flatContentArray = FlatTree(rootNode);
+			var flatContentArray = FlatTree(rootNode, comment);
 			
 			EnsurePathExist(filePath);
 			fs.writeFileSync(filePath, flatContentArray.join("\n"));
@@ -544,7 +553,7 @@ var codeBlocks = require('./CodeBlocks.js')
   , writer = require('./Writer.js')
   , fs = require('fs');
   
-function ExtractSourceCode(inputFilesArray, outputFolder) {
+function ExtractSourceCode(inputFilesArray, outputFolder, comment) {
 	var success = true;
 	
 	// extract macro declaration
@@ -571,7 +580,7 @@ function ExtractSourceCode(inputFilesArray, outputFolder) {
 	var rootArray = tree.ConstructTree(macroDeclarationArray);
 	if(rootArray != null) {
 		// write source code
-		writer.WriteTree(rootArray, outputFolder);
+		writer.WriteTree(rootArray, outputFolder, comment);
 	} else {
 		console.error("generation stopped after some error in the tree");
 	}
