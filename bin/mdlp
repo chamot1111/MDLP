@@ -11,7 +11,7 @@ var mdlp = require('../')
 var usageLine = '[options] file1 ... fileN';
 
 program
-  .version('0.0.1')
+  .version('0.0.4')
   .usage(usageLine)
   .option('-o, --output-folder [path]', 'output folder for the source code')
   .option('-c, --comment [comment]', 'if you want to have comment in the source code with the name of macro')
