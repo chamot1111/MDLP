@@ -90,7 +90,7 @@ A code blocks not always contains a macro declaration. If a code block contains 
 ```
 <<contains_macro_declaration>> =
 	function ContainsMacroDeclaration(lines) {
-		return (/^<<[^<]/).test(lines[0]);
+		return (/^[ \t]*<<[^<]/).test(lines[0]);
 	}
 ```
 
@@ -112,7 +112,7 @@ Then parse the first line to extract the macro declaration name.
 	 */
 	function ParseMacroDeclarationHeader(l, lineNumber, filename) {
 		var result = {};
-		var r = (/^<<.*>>/).exec(l);
+		var r = (/<<.*>>/).exec(l);
 		
 		<<parse-macro-declaration-header-error1>>
 		
