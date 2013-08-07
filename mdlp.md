@@ -138,12 +138,12 @@ Then parse the first line to extract the macro declaration name.
 		return result;
 	}
 ``` 
-Now each further lines can't have specific error. In a first pass we create macro content objects for each line and we detecte spaces baseline.
+Now each further lines can't have specific error. In a first pass we create macro content objects for each line and we detect at spaces baseline the minimum.
 
 ```
 <<extract-macro-content>> =
 	var baselineSpaces = Number.MAX_VALUE;
-	for(var i = 1; i < lines.length; i++) {
+	for(var i = lineStart; i < lines.length; i++) {
 		var l = lines[i];
 		var lTrim = l.trim();
 		var indent = ReadIndentLevel(l);
@@ -281,7 +281,7 @@ Travel through all the tree with Depth-first pre-order traversal and concatenate
             for(var j = 0; j < indent; j++) {
                 s += " ";
             }
-            s += comment + " <<" + node.Name + ">> ( " + node.Filename + ":" + node.Linenumber + ")";
+            s += comment + " <<" + node.Name + ">> ( " + node.Filename + ":" + node.Linenumber + " )";
 
 			lines.push(s);
 		}
@@ -420,7 +420,7 @@ Macro declaration module
 	 * n.b: this function print no error
 	 */
 	function ExtractMacroName(content) {
-		var r = (/^<<[\w \-\.\/]+>>$/).exec(content);
+		var r = (/^<<[\w :\-\.\/]+>>$/).exec(content);
 		if(r == null) {
 			return "";
 		}
@@ -440,22 +440,33 @@ Macro declaration module
 	}
 
 	/**
+	 * Extract maco content from lines after the macro header.
+	 */
+	function ExtractMacroContent(lineStart, lines, lineNumber, filename, name, concatenate) {
+		var md = new MacroDeclaration();
+		md.Filename = filename;
+		md.Linenumber = lineNumber;
+		md.Name = name;
+		md.Concatenate = concatenate;
+
+		<<extract-macro-content>>
+		return md;
+	}
+
+	/**
 	 * Take code block content and return a MacroDeclaration object.
 	 * Return null if an error happen.
 	 */
 	function ParseMacroDeclaration(lines, lineNumber, filename) {
 		<<check-contain-macro>>
-		var md = new MacroDeclaration();
+		
 		var headerInfo = ParseMacroDeclarationHeader(lines[0], lineNumber, filename);
 		if(headerInfo == null) {
 			return null;
 		}
-		md.Name = headerInfo.name;
-		md.Filename = filename;
-		md.Linenumber = lineNumber;
-		md.Concatenate = headerInfo.concatenate;
-		<<extract-macro-content>>
 		
+		var md = ExtractMacroContent(1, lines, lineNumber, filename, headerInfo.name, headerInfo.concatenate);
+
 		if(md.MacroContentArray.length == 0) {
 			console.error(filename + ":" + lineNumber + ": macro declaration is empty");
 		}
@@ -464,6 +475,7 @@ Macro declaration module
 	}
 
 	module.exports.ParseMacroDeclaration = ParseMacroDeclaration;
+	module.exports.ExtractMacroContent   = ExtractMacroContent;
 ```
 
 Tree Module
@@ -554,29 +566,44 @@ var codeBlocks = require('./CodeBlocks.js')
   , macroDeclaration = require('./MacroDeclaration.js')
   , tree = require('./Tree.js')
   , writer = require('./Writer.js')
-  , fs = require('fs');
+  , fs = require('fs')
+  , path = require('path');
   
 function ExtractSourceCode(inputFilesArray, outputFolder, comment) {
 	var success = true;
 	
 	// extract macro declaration
 	var macroDeclarationArray = [];
-	for(var i =0; i < inputFilesArray.length; i++) {
+	for(var i = 0; i < inputFilesArray.length; i++) {
 		var inputFile = inputFilesArray[i];
+		var b = path.basename(inputFile);
+		var ext = path.extname(b);
+
 		if(!fs.existsSync(inputFile)) {
 			console.error(inputFile + " doesn't exist");
 			success = false;
 			continue;
 		}
 		var fileContent = fs.readFileSync(inputFile, 'utf8');
-		codeBlocks.CodeBlocksParse(fileContent.split("\n"), function(lines, lineNumber, filename) {
-			var md = macroDeclaration.ParseMacroDeclaration(lines, lineNumber, filename);
+
+		if(ext == ".mdlp") {
+			var rootName = path.basename(b, ".mdlp");
+			var md = macroDeclaration.ExtractMacroContent(0, fileContent.split("\n"), 0, inputFile, "::" + rootName, false);
 			if(md == null) {
 				success = false;
 			} else {
 				macroDeclarationArray.push(md);
 			}
-		}, inputFile);
+		} else {
+			codeBlocks.CodeBlocksParse(fileContent.split("\n"), function(lines, lineNumber, filename) {
+				var md = macroDeclaration.ParseMacroDeclaration(lines, lineNumber, filename);
+				if(md == null) {
+					success = false;
+				} else {
+					macroDeclarationArray.push(md);
+				}
+			}, inputFile);
+		}
 	}
 	
 	// create tree

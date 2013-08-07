@@ -62,3 +62,9 @@ All the code blocks are extracted from the file. The root macros names become fi
 	```
 	
 To avoid problems, by convention root macro name must begin with a `.` and path outside the output folder are forbidden.
+
+MDLP file
+---------
+
+Sometimes you want to have a file with only a macro declaration and no markdown content. You ca do that with the extension `.mdlp` for the file. The content of the file is considered as a macro content. The macro name for the file `./filename.mdlp` become `<<::filename>>`.
+

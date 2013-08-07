@@ -8,10 +8,10 @@
 var mdlp = require('../')
   , program = require('commander');
 
-var usageLine = '[options] file1 ... fileN';
+var usageLine = '[options] file1.md file2.md ... fileN.mdlp';
 
 program
-  .version('0.0.4')
+  .version('0.0.5')
   .usage(usageLine)
   .option('-o, --output-folder [path]', 'output folder for the source code')
   .option('-c, --comment [comment]', 'if you want to have comment in the source code with the name of macro')
